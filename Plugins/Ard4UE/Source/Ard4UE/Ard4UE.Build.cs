@@ -1,14 +1,21 @@
 // Some copyright should be here...
 
 using UnrealBuildTool;
+using System; // Console.WriteLine("");
 
 public class Ard4UE : ModuleRules
 {
-	public Ard4UE(ReadOnlyTargetRules Target) : base(Target)
+    
+
+    public Ard4UE(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		
-		PublicIncludePaths.AddRange(
+
+
+        PublicAdditionalLibraries.Add(ModuleDirectory + "\\..\\..\\ThirdParty\\serial.lib");
+        PublicIncludePaths.Add(ModuleDirectory + "\\..\\..\\ThirdParty\\serial\\include");
+
+        PublicIncludePaths.AddRange(
 			new string[] {
 				"Ard4UE/Public"
 				
@@ -55,5 +62,7 @@ public class Ard4UE : ModuleRules
 				// ... add any modules that your module loads dynamically here ...
 			}
 			);
+
+
 	}
 }
