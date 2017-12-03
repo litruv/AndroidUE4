@@ -73,3 +73,9 @@ Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+enc_temp_folder/
+
+Plugins/Ard4UE/Binaries/
+
+Plugins/Ard4UE/Intermediate/
