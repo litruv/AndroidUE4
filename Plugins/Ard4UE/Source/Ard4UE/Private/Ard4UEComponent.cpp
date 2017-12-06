@@ -22,9 +22,11 @@ void UArd4UEComponent::enumeratePorts(TArray<FString> &ComPorts) const
 
 void UArd4UEComponent::disconnectPort() const
 {
-
-	mySerial.flush();
-	mySerial.close();
+	if (mySerial.isOpen())
+	{
+		mySerial.flush();
+		mySerial.close();
+	}
 }
 
 void UArd4UEComponent::initializeConnection(FName COMPort, int BAUDRate /*= 9600*/, int bytesize /*= 8*/) const
@@ -37,18 +39,13 @@ void UArd4UEComponent::initializeConnection(FName COMPort, int BAUDRate /*= 9600
 	mySerial.open();
 }
 
-// Sets default values for this component's properties
 UArd4UEComponent::UArd4UEComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
 }
 
 
-// Called when the game starts
 void UArd4UEComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -63,6 +60,38 @@ void UArd4UEComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	if (mySerial.isOpen())
+	{
+		if (mySerial.available() > 1)
+		{
+			std::string stringRead;
+			if (mySerial.readline(stringRead))
+			{
+				FString stringReadFS(stringRead.c_str());
+				FString trimmed = stringReadFS.RightChop(1);
+
+				if (stringReadFS.StartsWith(FString("f")))
+				{
+					OnSerialFloatRecieved.Broadcast(FCString::Atof(*trimmed));
+				}
+				else if (stringReadFS.StartsWith(FString("s")))
+				{
+					OnSerialStringRecieved.Broadcast(trimmed.ReplaceEscapedCharWithChar());
+				}
+					
+			}
+		}
+	}
+
+
+}
+
+void UArd4UEComponent::BeginDestroy()
+{
+
+	Super::BeginDestroy();
+
+		if ( mySerial.isOpen())
+		UArd4UEComponent::disconnectPort();
 }
 

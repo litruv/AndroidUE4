@@ -9,7 +9,8 @@
 #include "Ard4UEComponent.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageDelegate, float, Number);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageFloatDelegate, float, Number);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageStringDelegate, FString, String);
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ARD4UE_API UArd4UEComponent : public UActorComponent
@@ -24,7 +25,10 @@ class ARD4UE_API UArd4UEComponent : public UActorComponent
 
 
 	UPROPERTY(BlueprintAssignable, Category = "Ard4UE")
-		FMessageDelegate OnSerialFloatRecieved;
+		FMessageFloatDelegate OnSerialFloatRecieved;
+
+	UPROPERTY(BlueprintAssignable, Category = "Ard4UE")
+		FMessageStringDelegate OnSerialStringRecieved;
 public:	
 	// Sets default values for this component's properties
 	UArd4UEComponent();
@@ -36,4 +40,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public:
+	virtual void BeginDestroy() override;
+
 };
